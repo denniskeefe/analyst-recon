@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OSINT Resource Center</title>
+  <style>
+    :root {
+      --bg:       #0a0e1a;
+      --surface:  #111827;
+      --card:     #1a2235;
+      --border:   #1e3a5f;
+      --accent:   #00d4ff;
+      --accent2:  #0077b6;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --tag-bg:   #0d2340;
+      --tag-text: #38bdf8;
+      --green:    #22c55e;
+      --yellow:   #f59e0b;
+      --red:      #ef4444;
+      --purple:   #a855f7;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── UPDATE BANNER ── */
+    .update-banner {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 0.35rem 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+    .update-banner strong { color: var(--accent); font-weight: 600; }
+    .update-banner-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      vertical-align: middle;
+      position: relative;
+      top: -1px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0a0e1a 0%, #0d1a2e 50%, #0a1628 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .logo-sub {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* search bar */
+    .search-wrap {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 2.25rem 0.5rem 2.5rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap input::placeholder { color: var(--muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 0.6rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0.15rem;
+      display: none;
+    }
+    .search-clear:hover { color: var(--text); }
+
+    .header-meta {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(180deg, #0d1a2e 0%, var(--bg) 100%);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero p {
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── CATEGORY FILTER TABS ── */
+    .filter-bar {
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .filter-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .filter-btn.active {
+      background: var(--accent2);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .filter-access-row {
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .filter-access-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      align-self: center;
+      white-space: nowrap;
+      margin-right: 0.25rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .access-free-btn:hover, .access-free-btn.active   { border-color: var(--green);  color: var(--green);  background: rgba(34,197,94,0.12); }
+    .access-freemium-btn:hover, .access-freemium-btn.active { border-color: var(--yellow); color: var(--yellow); background: rgba(245,158,11,0.12); }
+    .access-paid-btn:hover, .access-paid-btn.active   { border-color: var(--red);    color: var(--red);    background: rgba(239,68,68,0.12); }
+
+    /* ── MAIN GRID ── */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section { margin-bottom: 3rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-count {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: border-color 0.2s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .card-emoji {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .card-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .tag {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 0.65rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .card-link {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--accent);
+      font-size: 0.78rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .card-link:hover { text-decoration: underline; }
+
+    /* cost / access badge */
+    .access-free  { color: var(--green); }
+    .access-paid  { color: var(--yellow); }
+    .access-freemium { color: var(--purple); }
+
+    /* ── TOOLS PANEL ── */
+    .tools-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .tools-panel h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .tool-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── HIDDEN ── */
+    .hidden { display: none !important; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 640px) {
+      .header-inner { gap: 1rem; }
+      .header-meta { display: none; }
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ UPDATE BANNER ══════════════ -->
+<div class="update-banner">
+  <span class="update-banner-dot"></span>
+  Last updated: <strong>April 6, 2026</strong>
+</div>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">&#x1F50D;</div>
+      <div>
+        <div class="logo-text">OSINT HUB</div>
+        <div class="logo-sub">Intelligence Resource Center</div>
+      </div>
+    </a>
+
+    <div class="search-wrap">
+      <span class="search-icon">&#x1F50E;</span>
+      <input type="text" id="searchInput" placeholder="Search tools, categories, tags…" />
+      <button class="search-clear" id="searchClear" title="Clear search">&#x2715;</button>
+    </div>
+
+    <div class="header-meta">
+      <span class="badge">Analyst Tools</span>
+      <span class="badge" id="resultCount">Resources</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ HERO ══════════════ -->
+<div class="hero">
+  <h1>OSINT Resource Center</h1>
+  <p>A curated intelligence hub for open-source analysts. Discover tools, frameworks, and data sources across every domain of OSINT collection.</p>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num" id="statCategories">0</div><div class="stat-label">Categories</div></div>
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Resources</div></div>
+    <div class="stat"><div class="stat-num" id="statFree">0</div><div class="stat-label">Free Tools</div></div>
+    <div class="stat"><div class="stat-num">&#x221E;</div><div class="stat-label">Intelligence</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ FILTER BAR ══════════════ -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="people">People Search</button>
+    <button class="filter-btn" data-filter="domain">Domain &amp; IP</button>
+    <button class="filter-btn" data-filter="social">Social Media</button>
+    <button class="filter-btn" data-filter="geoint">Geospatial</button>
+    <button class="filter-btn" data-filter="image">Images &amp; Video</button>
+    <button class="filter-btn" data-filter="email">Email &amp; Username</button>
+    <button class="filter-btn" data-filter="darkweb">Dark Web</button>
+    <button class="filter-btn" data-filter="threats">Threat Intel</button>
+    <button class="filter-btn" data-filter="documents">Documents</button>
+    <button class="filter-btn" data-filter="framework">Frameworks</button>
+    <button class="filter-btn" data-filter="corporate">Corporate</button>
+    <button class="filter-btn" data-filter="breaches">Breaches &amp; Leaks</button>
+  </div>
+  <div class="filter-inner filter-access-row">
+    <span class="filter-access-label">Access:</span>
+    <button class="filter-btn access-btn active" data-access="all">All</button>
+    <button class="filter-btn access-btn access-free-btn" data-access="free">&#x2713; Free</button>
+    <button class="filter-btn access-btn access-freemium-btn" data-access="freemium">&#x26A1; Freemium</button>
+    <button class="filter-btn access-btn access-paid-btn" data-access="paid">&#x1F512; Paid</button>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main id="mainContent">
+
+  <!-- Quick Access Toolbar -->
+  <div class="tools-panel">
+    <h3>Quick Access — Analyst Essentials</h3>
+    <div class="tools-grid">
+      <a class="tool-btn" href="https://www.shodan.io" target="_blank">&#x1F5A5; Shodan</a>
+      <a class="tool-btn" href="https://www.maltego.com" target="_blank">&#x1F578; Maltego</a>
+      <a class="tool-btn" href="https://search.censys.io" target="_blank">&#x1F50D; Censys</a>
+      <a class="tool-btn" href="https://www.virustotal.com" target="_blank">&#x1F6E1; VirusTotal</a>
+      <a class="tool-btn" href="https://haveibeenpwned.com" target="_blank">&#x1F513; HaveIBeenPwned</a>
+      <a class="tool-btn" href="https://web.archive.org" target="_blank">&#x1F4D6; Wayback Machine</a>
+      <a class="tool-btn" href="https://hunter.io" target="_blank">&#x2709; Hunter.io</a>
+      <a class="tool-btn" href="https://spiderfoot.net" target="_blank">&#x1F577; SpiderFoot</a>
+    </div>
+  </div>
+
+  <!-- ── PEOPLE SEARCH ── -->
+  <section class="section" data-category="people">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a3a2a">&#x1F464;</div>
+      <span class="section-title">People Search &amp; Identity</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F575;</span>
+          <div><div class="card-name">Spokeo</div>
+          <div class="card-desc">Aggregates public records, social profiles, and contact data. Useful for identity correlation across multiple data sources.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">public records</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.spokeo.com" target="_blank">spokeo.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CB;</span>
+          <div><div class="card-name">TruthFinder</div>
+          <div class="card-desc">Deep-dive background checks combining criminal records, addresses, relatives, and contact history.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">background check</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.truthfinder.com" target="_blank">truthfinder.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4DC;</span>
+          <div><div class="card-name">VoterRecords.com</div>
+          <div class="card-desc">Search public voter registration data by name, address, or county. Useful for locating individuals in U.S. jurisdictions.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">public records</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://voterrecords.com" target="_blank">voterrecords.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3DB;</span>
+          <div><div class="card-name">PACER</div>
+          <div class="card-desc">U.S. federal court case access. Search civil, criminal, and bankruptcy cases by party name.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">court records</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://pacer.uscourts.gov" target="_blank">pacer.uscourts.gov &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4C2;</span>
+          <div><div class="card-name">BRB Publications — Public Record Sites</div>
+          <div class="card-desc">Curated directory of free government public record portals across all 50 U.S. states. Covers court records, criminal repositories, vital records, occupational licensing, property records, military records, and more — organized by jurisdiction and record type. A strong gateway for locating the right agency before searching.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">public records</span><span class="tag">court records</span><span class="tag">government</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.brbpublications.com/free-resources/public-record-sites" target="_blank">brbpublications.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4F1;</span>
+          <div><div class="card-name">FastPeopleSearch</div>
+          <div class="card-desc">Free aggregator for addresses, phone numbers, and relatives. No account required for basic lookups.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">phone</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.fastpeoplesearch.com" target="_blank">fastpeoplesearch.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F464;</span>
+          <div><div class="card-name">ThatsThem</div>
+          <div class="card-desc">Free people search engine aggregating data from 50+ sources. Search by name, phone, email, or address to surface contact details, residential history, property data, and demographic information. Claims coverage of 2.2 billion names, 1.7 billion emails, and 1 billion phone numbers.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">phone</span><span class="tag">email</span><span class="tag">reverse lookup</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://thatsthem.com" target="_blank">thatsthem.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9E0;</span>
+          <div><div class="card-name">PeopleFinder</div>
+          <div class="card-desc">Comprehensive people-search combining white pages, criminal records, and social media links.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">aggregator</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.peoplefinder.com" target="_blank">peoplefinder.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4DE;</span>
+          <div><div class="card-name">Whitepages</div>
+          <div class="card-desc">U.S. white pages directory for reverse phone lookups, address history, and associated names. One of the oldest and most comprehensive people-search aggregators.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">phone</span><span class="tag">reverse lookup</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.whitepages.com" target="_blank">whitepages.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9EC;</span>
+          <div><div class="card-name">FamilyTreeNow</div>
+          <div class="card-desc">Free genealogy-based people search exposing relatives, historical addresses, and age data. Frequently overlooked but highly effective for building subject timelines.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">relatives</span><span class="tag">genealogy</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.familytreenow.com" target="_blank">familytreenow.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4F1;</span>
+          <div><div class="card-name">NumLookup</div>
+          <div class="card-desc">Free reverse phone number lookup returning carrier, owner name, and line type (mobile/landline/VoIP). No account required.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">phone</span><span class="tag">reverse lookup</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.numlookup.com" target="_blank">numlookup.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F575;</span>
+          <div><div class="card-name">Radaris</div>
+          <div class="card-desc">Deep people-search aggregator with address history, business affiliations, social profiles, and court records. Useful for cross-referencing across multiple identity vectors.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">aggregator</span><span class="tag">business</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://radaris.com" target="_blank">radaris.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CB;</span>
+          <div><div class="card-name">ZabaSearch</div>
+          <div class="card-desc">Free people search using publicly available data. Returns addresses, phone numbers, and relatives without requiring a subscription.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">public records</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.zabasearch.com" target="_blank">zabasearch.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F575;</span>
+          <div><div class="card-name">IDCrawl</div>
+          <div class="card-desc">Free people search engine that scans social networks, public records, and username registrations. Quickly surfaces linked accounts and profiles across platforms from a single name or username query.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">username</span><span class="tag">social profiles</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.idcrawl.com" target="_blank">idcrawl.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CD;</span>
+          <div><div class="card-name">ClustrMaps</div>
+          <div class="card-desc">People search and address lookup aggregator. Search by name, address, or phone to surface current and historical residences, neighbors, and associated individuals — useful for building address timelines and locating subjects.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">address</span><span class="tag">public records</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://clustrmaps.com" target="_blank">clustrmaps.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F310;</span>
+          <div><div class="card-name">Pipl</div>
+          <div class="card-desc">Professional-grade identity resolution engine. Aggregates deep web, social, and contact data into unified identity profiles. Widely used by investigators and fraud analysts.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">identity resolution</span><span class="tag">professional</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://pipl.com" target="_blank">pipl.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x2696;</span>
+          <div><div class="card-name">BeenVerified</div>
+          <div class="card-desc">Consumer background check platform covering criminal records, addresses, phone numbers, emails, and social media. Useful for rapid subject overviews.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">people</span><span class="tag">background check</span><span class="tag">criminal records</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.beenverified.com" target="_blank">beenverified.com &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── DOMAIN & IP ── -->
+  <section class="section" data-category="domain">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a2a3a">&#x1F310;</div>
+      <span class="section-title">Domain, IP &amp; Network Intelligence</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F5A5;</span>
+          <div><div class="card-name">Shodan</div>
+          <div class="card-desc">Search engine for internet-connected devices. Query banners, open ports, services, SSL certs, and geolocation for any IP or domain.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">ip</span><span class="tag">iot</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.shodan.io" target="_blank">shodan.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50D;</span>
+          <div><div class="card-name">Censys</div>
+          <div class="card-desc">Internet-wide scan data with certificate transparency, TLS analysis, and host enumeration. Strong API for automation.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">ip</span><span class="tag">certs</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://search.censys.io" target="_blank">censys.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x26AA;</span>
+          <div><div class="card-name">WHOIS Lookup</div>
+          <div class="card-desc">Domain registration data including registrant, registrar, and nameservers. Multiple providers for historical data.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">whois</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://lookup.icann.org" target="_blank">lookup.icann.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9F1;</span>
+          <div><div class="card-name">SecurityTrails</div>
+          <div class="card-desc">Historical DNS, WHOIS, and subdomain enumeration. Track infrastructure changes over time.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">dns</span><span class="tag">history</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://securitytrails.com" target="_blank">securitytrails.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4A1;</span>
+          <div><div class="card-name">IPinfo</div>
+          <div class="card-desc">Geolocation, ASN, carrier, and abuse contact data for IP addresses. Fast API with 50k free requests/month.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">ip</span><span class="tag">geolocation</span><span class="tag">asn</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://ipinfo.io" target="_blank">ipinfo.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4DF;</span>
+          <div><div class="card-name">MAC Address Lookup</div>
+          <div class="card-desc">Identify the manufacturer and vendor of any device by its MAC address or OUI prefix. Queries a database of 57,000+ prefixes sourced from IEEE and Wireshark. Supports batch lookups, a free REST API, and downloadable databases in JSON, CSV, and Cisco XML formats — useful for network forensics and device attribution.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">network</span><span class="tag">mac address</span><span class="tag">device</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://maclookup.app" target="_blank">maclookup.app &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F517;</span>
+          <div><div class="card-name">BuiltWith</div>
+          <div class="card-desc">Technology profiling for websites — CMS, analytics, CDN, ad networks, and framework detection.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">tech stack</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://builtwith.com" target="_blank">builtwith.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4E1;</span>
+          <div><div class="card-name">DNSDumpster</div>
+          <div class="card-desc">Free DNS recon and research tool. Discover DNS records and visualize domain infrastructure as a graph.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">dns</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://dnsdumpster.com" target="_blank">dnsdumpster.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50E;</span>
+          <div><div class="card-name">Forensic OSINT — Domain to IP</div>
+          <div class="card-desc">Domain-to-IP lookup with full DNS records, security scoring, tech stack fingerprinting, and enriched network intelligence data. Free tool, no account required.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">ip</span><span class="tag">dns</span><span class="tag">security score</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.forensicosint.com/free-tools/domain-to-ip-lookup" target="_blank">forensicosint.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4A1;</span>
+          <div><div class="card-name">ip.me</div>
+          <div class="card-desc">Instant public IP address lookup. Returns your external IP in plain text or JSON — useful for confirming VPN/proxy exit nodes and verifying source attribution during investigations.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">ip</span><span class="tag">lookup</span><span class="tag">vpn check</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://ip.me" target="_blank">ip.me &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4DC;</span>
+          <div><div class="card-name">crt.sh</div>
+          <div class="card-desc">Certificate Transparency log search engine. Query all SSL/TLS certificates ever issued for a domain to enumerate subdomains, discover infrastructure, and identify historically registered assets that may no longer be publicly visible.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">certificates</span><span class="tag">subdomain enum</span><span class="tag">tls</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://crt.sh" target="_blank">crt.sh &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9FF;</span>
+          <div><div class="card-name">Web-Check</div>
+          <div class="card-desc">All-in-one open-source website intelligence tool. Returns IP info, DNS records, SSL chain, WHOIS, redirect chain, headers, cookies, trackers, server location, linked pages, and more — from a single domain query.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">dns</span><span class="tag">ssl</span><span class="tag">whois</span><span class="tag">open source</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://web-check.as93.net" target="_blank">web-check.as93.net &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9EC;</span>
+          <div><div class="card-name">urlDNA</div>
+          <div class="card-desc">Deep URL and website analysis platform. Scans for phishing, malware, brand impersonation, and tech stack fingerprinting. Useful for vetting suspicious links, investigating lookalike domains, and integrating automated URL scanning via API or Python package.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">url</span><span class="tag">phishing</span><span class="tag">malware</span><span class="tag">tech stack</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://urldna.io" target="_blank">urldna.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F516;</span>
+          <div><div class="card-name">FaviHash</div>
+          <div class="card-desc">Generates and searches favicon hashes to cluster related web infrastructure. Identify domains sharing the same favicon — revealing shared hosting, common ownership, or reused templates across both the clearnet and dark web. Pairs well with Shodan favicon searches.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">domain</span><span class="tag">favicon</span><span class="tag">infrastructure</span><span class="tag">dark web</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.favihash.com" target="_blank">favihash.com &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SOCIAL MEDIA ── -->
+  <section class="section" data-category="social">
+    <div class="section-header">
+      <div class="section-icon" style="background:#2a1a3a">&#x1F4F2;</div>
+      <span class="section-title">Social Media Intelligence</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F441;</span>
+          <div><div class="card-name">Social Searcher</div>
+          <div class="card-desc">Real-time social media monitoring across Twitter, Facebook, YouTube, Reddit, and more. Sentiment analysis included.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">monitoring</span><span class="tag">sentiment</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.social-searcher.com" target="_blank">social-searcher.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CA;</span>
+          <div><div class="card-name">Intelx.io — Social</div>
+          <div class="card-desc">Intelligence X searches pastes, leaks, and indexed social content. Useful for finding deleted posts and account data.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">leaks</span><span class="tag">pastes</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://intelx.io" target="_blank">intelx.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4F8;</span>
+          <div><div class="card-name">Snapchat Map</div>
+          <div class="card-desc">Snap Map provides public geotagged story content. Useful for event-based geospatial verification.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">geoint</span><span class="tag">real-time</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://map.snapchat.com" target="_blank">map.snapchat.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4DD;</span>
+          <div><div class="card-name">Reddit Search</div>
+          <div class="card-desc">PushShift and native Reddit search for historical post and comment data. Advanced operators supported.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">reddit</span><span class="tag">forums</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.reddit.com/search" target="_blank">reddit.com/search &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F916;</span>
+          <div><div class="card-name">Brandwatch</div>
+          <div class="card-desc">Enterprise social listening platform with historical data, AI-powered analysis, and influence mapping.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">monitoring</span><span class="tag">enterprise</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.brandwatch.com" target="_blank">brandwatch.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F426;</span>
+          <div><div class="card-name">X / Twitter Advanced Search</div>
+          <div class="card-desc">Native advanced search operators for X (Twitter). Filter by date, location, language, engagement, and account. Essential for timeline reconstruction and event monitoring.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">twitter/x</span><span class="tag">search operators</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://x.com/search-advanced" target="_blank">x.com/search-advanced &#x2197;</a>
+      </div>
+
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x2708;</span>
+          <div><div class="card-name">Telegram OSINT (TGStat)</div>
+          <div class="card-desc">Search and analyze Telegram channels, groups, and posts. View subscriber history, post frequency, and cross-channel mentions. Useful for tracking influence networks.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">telegram</span><span class="tag">channels</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://tgstat.com" target="_blank">tgstat.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50D;</span>
+          <div><div class="card-name">Waybien</div>
+          <div class="card-desc">Search engine for social media groups and channels across Telegram, Discord, WhatsApp, Slack, Signal, and Facebook. Filter by category, language, location, and member count — useful for mapping communities and tracking influence networks.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">telegram</span><span class="tag">discord</span><span class="tag">whatsapp</span><span class="tag">community search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://waybien.com/en" target="_blank">waybien.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3A5;</span>
+          <div><div class="card-name">Filmot</div>
+          <div class="card-desc">Search engine for YouTube subtitles and transcripts across over 1.6 billion videos. Supports advanced operators including exact phrases, proximity matching, and channel filtering — useful for finding specific spoken content that wouldn't surface through standard YouTube search.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">youtube</span><span class="tag">video</span><span class="tag">search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://filmot.com" target="_blank">filmot.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3B5;</span>
+          <div><div class="card-name">TikTok Search</div>
+          <div class="card-desc">Native TikTok search for accounts, hashtags, and sounds. Combined with browser dev tools, analysts can surface geotagged content and account metadata from public profiles.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">tiktok</span><span class="tag">video</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.tiktok.com/search" target="_blank">tiktok.com/search &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CA;</span>
+          <div><div class="card-name">Followerwonk</div>
+          <div class="card-desc">Twitter/X analytics tool for searching bios, comparing followers, mapping social graphs, and identifying influential accounts within a target network.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">twitter/x</span><span class="tag">network analysis</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://followerwonk.com" target="_blank">followerwonk.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F426;</span>
+          <div><div class="card-name">Xcancel</div>
+          <div class="card-desc">Privacy-friendly X (Twitter) viewer. Browse profiles, posts, and threads without an account or login wall — useful for accessing X content anonymously during investigations without leaving a trace.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">twitter/x</span><span class="tag">anonymous</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://xcancel.com" target="_blank">xcancel.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F517;</span>
+          <div><div class="card-name">SocialLinks Pro</div>
+          <div class="card-desc">Professional SOCMINT platform with Maltego integration. Automates data collection from 150+ social networks, messengers, and blockchain sources for link analysis.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">maltego</span><span class="tag">automation</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://sociallinks.io" target="_blank">sociallinks.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F465;</span>
+          <div><div class="card-name">Facebook People Search</div>
+          <div class="card-desc">Use Facebook's native search with graph search operators and URL manipulation techniques to find profiles, posts, and connections by location, employer, or name.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">social</span><span class="tag">facebook</span><span class="tag">graph search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.facebook.com/search" target="_blank">facebook.com/search &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── GEOSPATIAL ── -->
+  <section class="section" data-category="geoint">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a3a1a">&#x1F30D;</div>
+      <span class="section-title">Geospatial &amp; GEOINT</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F6F0;</span>
+          <div><div class="card-name">Sentinel Hub</div>
+          <div class="card-desc">ESA satellite imagery browser. Multi-temporal analysis across Sentinel, Landsat, and MODIS datasets.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">satellite</span><span class="tag">imagery</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.sentinel-hub.com" target="_blank">sentinel-hub.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F5FA;</span>
+          <div><div class="card-name">Google Earth Pro</div>
+          <div class="card-desc">Historical satellite imagery, terrain analysis, and measurement tools. Timeline feature for change detection.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">satellite</span><span class="tag">historical</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://earth.google.com" target="_blank">earth.google.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F6E3;</span>
+          <div><div class="card-name">KartaView</div>
+          <div class="card-desc">Open, crowdsourced street-level imagery platform — a free alternative to Google Street View. Useful for geolocating images in areas where Google has no coverage, cross-referencing locations, and accessing image metadata including GPS coordinates and timestamps. Public API available for programmatic use.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">street-level</span><span class="tag">geolocation</span><span class="tag">imagery</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://kartaview.org/landing" target="_blank">kartaview.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CD;</span>
+          <div><div class="card-name">What3Words</div>
+          <div class="card-desc">3m x 3m grid addressing system. Correlate What3Words locations with coordinates for precision verification.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">location</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://what3words.com/map" target="_blank">what3words.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x2708;</span>
+          <div><div class="card-name">FlightAware</div>
+          <div class="card-desc">Real-time and historical aircraft tracking. ADS-B based flight data with tail number and route history.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">aviation</span><span class="tag">tracking</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://flightaware.com" target="_blank">flightaware.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x26F5;</span>
+          <div><div class="card-name">MarineTraffic</div>
+          <div class="card-desc">Global AIS vessel tracking. Identify ships by MMSI, IMO, or vessel name with historical voyage data.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">maritime</span><span class="tag">tracking</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.marinetraffic.com" target="_blank">marinetraffic.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4E6;</span>
+          <div><div class="card-name">OceanTrackers</div>
+          <div class="card-desc">Shipping container tracking and supply chain visibility tool. Monitor container locations, status, and movement across global shipping routes — useful for investigating cargo shipments, trade activity, and supply chain intelligence.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">maritime</span><span class="tag">containers</span><span class="tag">supply chain</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://oceantrackers.com" target="_blank">oceantrackers.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F6F8;</span>
+          <div><div class="card-name">KeepTrack.space</div>
+          <div class="card-desc">Open-source real-time 3D satellite and space object tracking platform. Visualize all catalogued objects in Earth orbit — satellites, debris, and rocket bodies — with launch history, orbital parameters, and sensor coverage data. Useful for space situational awareness and satellite imagery scheduling.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">satellite</span><span class="tag">space</span><span class="tag">real-time</span><span class="tag">open source</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://keeptrack.space" target="_blank">keeptrack.space &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x2600;</span>
+          <div><div class="card-name">ShadowMap</div>
+          <div class="card-desc">Interactive 3D sun position and shadow simulation for any location and time on Earth. Invaluable for geolocating photos by cross-referencing shadow direction and length, verifying timestamps on imagery, and confirming the plausibility of claimed locations.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">sun analysis</span><span class="tag">geolocation</span><span class="tag">verification</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://shadowmap.org" target="_blank">shadowmap.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x2600;&#xFE0F;</span>
+          <div><div class="card-name">SunCalc</div>
+          <div class="card-desc">Calculates sun position, azimuth, altitude, and shadow length for any location and date. Useful for geolocating imagery by matching shadow angles and direction, verifying photo timestamps, and confirming whether lighting conditions are consistent with a claimed time and place.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">sun analysis</span><span class="tag">geolocation</span><span class="tag">verification</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.suncalc.org" target="_blank">suncalc.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4F6;</span>
+          <div><div class="card-name">WiGLE</div>
+          <div class="card-desc">Worldwide crowdsourced database of WiFi networks, Bluetooth devices, and cell towers mapped by location. Look up an SSID or BSSID to geolocate a network — useful for pinpointing where a device was used, corroborating claimed locations, and tracing movement patterns.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">geoint</span><span class="tag">wifi</span><span class="tag">geolocation</span><span class="tag">network mapping</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://wigle.net" target="_blank">wigle.net &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── IMAGE & VIDEO ── -->
+  <section class="section" data-category="image">
+    <div class="section-header">
+      <div class="section-icon" style="background:#2a1a1a">&#x1F4F8;</div>
+      <span class="section-title">Image, Video &amp; Metadata Analysis</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F441;</span>
+          <div><div class="card-name">Google Reverse Image</div>
+          <div class="card-desc">Upload or paste an image URL to find similar images, source pages, and related content across the web.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">reverse search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://images.google.com" target="_blank">images.google.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9EC;</span>
+          <div><div class="card-name">TinEye</div>
+          <div class="card-desc">Reverse image search with timestamp data showing where and when an image first appeared online.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">reverse search</span><span class="tag">history</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://tineye.com" target="_blank">tineye.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4BE;</span>
+          <div><div class="card-name">ExifTool</div>
+          <div class="card-desc">Extract metadata from images and files: GPS coordinates, camera model, timestamps, and software signatures.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">metadata</span><span class="tag">exif</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://exiftool.org" target="_blank">exiftool.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3A5;</span>
+          <div><div class="card-name">InVID / WeVerify</div>
+          <div class="card-desc">Video verification toolkit for journalists and analysts. Keyframe extraction, reverse video search, and metadata.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">video</span><span class="tag">verification</span><span class="tag">deepfake</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://weverify.eu/tools" target="_blank">weverify.eu &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F916;</span>
+          <div><div class="card-name">Deepware Scanner</div>
+          <div class="card-desc">Free deepfake detection tool that analyzes videos for AI-generated facial manipulation. Accepts direct uploads or URLs from YouTube, Facebook, and Twitter, and returns a probability score for face-swap deepfakes. Results are probabilistic — best used as an indicator within a broader verification workflow.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">video</span><span class="tag">deepfake</span><span class="tag">verification</span><span class="tag">AI detection</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://scanner.deepware.ai" target="_blank">scanner.deepware.ai &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F916;</span>
+          <div><div class="card-name">Hive Detect</div>
+          <div class="card-desc">Free AI-generated and deepfake content detection across images, video, audio, and text. Returns probability scores for synthetic content — including segment-level breakdowns for audio. No login required for basic use. Useful for quickly verifying whether media or written content was AI-generated before deeper investigation.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">video</span><span class="tag">audio</span><span class="tag">deepfake</span><span class="tag">AI detection</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://hivedetect.ai" target="_blank">hivedetect.ai &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F916;</span>
+          <div><div class="card-name">Illuminarty</div>
+          <div class="card-desc">AI-generated content detection for images and text. Identifies the probability of AI generation and attempts to pinpoint which AI model produced the content. For text, highlights specific passages most likely to be AI-written. Free for basic use — useful as a cross-reference tool alongside other AI detection platforms.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">text</span><span class="tag">AI detection</span><span class="tag">verification</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://illuminarty.ai/en" target="_blank">illuminarty.ai &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3A4;</span>
+          <div><div class="card-name">AI Voice Detector</div>
+          <div class="card-desc">Detects AI-generated and cloned voices in audio and video files. Processes audio in 6-second chunks to flag specific segments containing synthetic speech, with support for MP3, WAV, OGG, M4A, MP4, and MOV files up to 10 minutes. Includes background noise removal to improve accuracy. Useful for verifying the authenticity of recorded statements, calls, or media clips.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">audio</span><span class="tag">deepfake</span><span class="tag">AI detection</span><span class="tag">verification</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://aivoicedetector.com" target="_blank">aivoicedetector.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50D;</span>
+          <div><div class="card-name">Forensically</div>
+          <div class="card-desc">Browser-based image forensics tool for detecting photo manipulation. Features include clone detection, error level analysis, noise analysis, and a forensic magnifier with histogram equalization — all processed locally with no image upload.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">forensics</span><span class="tag">verification</span><span class="tag">metadata</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://29a.ch/photo-forensics/#forensic-magnifier" target="_blank">29a.ch/photo-forensics &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4F7;</span>
+          <div><div class="card-name">FotoForensics</div>
+          <div class="card-desc">Web-based image forensics tool specializing in Error Level Analysis (ELA) to identify areas of an image that may have been digitally altered. Accepts JPEG, PNG, WebP, HEIC, and AVIF files by upload or URL. Includes tutorials on interpreting results — useful for verifying the integrity of photos before publication or use in investigations.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">forensics</span><span class="tag">verification</span><span class="tag">ELA</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://fotoforensics.com" target="_blank">fotoforensics.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F935;</span>
+          <div><div class="card-name">PimEyes</div>
+          <div class="card-desc">Face recognition-based reverse image search. Find where a face appears across indexed web content.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">facial recognition</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://pimeyes.com" target="_blank">pimeyes.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3D9;</span>
+          <div><div class="card-name">Yandex Images</div>
+          <div class="card-desc">Often finds matches that Google misses, particularly for Eastern European and Russian-language content.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">reverse search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://yandex.com/images" target="_blank">yandex.com/images &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50D;</span>
+          <div><div class="card-name">PicDetective</div>
+          <div class="card-desc">Reverse image and facial recognition search tool. Upload a photo to find matching faces and images across the web — useful for identifying unknown subjects, verifying profile photos, and uncovering alternate accounts.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">facial recognition</span><span class="tag">reverse search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://picdetective.com" target="_blank">picdetective.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9F9;</span>
+          <div><div class="card-name">Cleanup.pictures</div>
+          <div class="card-desc">AI-powered image object removal tool. Erase unwanted elements, text, watermarks, or people from photos with a single brush stroke — useful for isolating subjects, cleaning evidence photos, and preparing images for further analysis or reporting.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">ai</span><span class="tag">editing</span><span class="tag">object removal</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://cleanup.pictures" target="_blank">cleanup.pictures &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F697;</span>
+          <div><div class="card-name">CarNet.AI</div>
+          <div class="card-desc">AI-powered vehicle identification from images. Recognizes make, model, generation, color, and angle across 300+ brands and 3,100+ models — useful for identifying vehicles in surveillance footage, social media photos, or evidence images.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">image</span><span class="tag">vehicle</span><span class="tag">ai</span><span class="tag">identification</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://carnet.ai" target="_blank">carnet.ai &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── EMAIL & USERNAME ── -->
+  <section class="section" data-category="email">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a2a3a">&#x2709;</div>
+      <span class="section-title">Email, Username &amp; Identity Verification</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3AF;</span>
+          <div><div class="card-name">Sherlock</div>
+          <div class="card-desc">Username enumeration across 300+ social networks. Command-line tool with fast concurrent lookups.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">username</span><span class="tag">social</span><span class="tag">enumeration</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://github.com/sherlock-project/sherlock" target="_blank">github.com/sherlock-project &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x2709;</span>
+          <div><div class="card-name">Hunter.io</div>
+          <div class="card-desc">Find and verify professional email addresses by domain. Identify email patterns for organizations.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">email</span><span class="tag">corporate</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://hunter.io" target="_blank">hunter.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50E;</span>
+          <div><div class="card-name">Epieos</div>
+          <div class="card-desc">Reverse email lookup revealing linked accounts, Google ID, and Gravatar profile from an email address.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">email</span><span class="tag">reverse lookup</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://epieos.com" target="_blank">epieos.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F194;</span>
+          <div><div class="card-name">WhatsMyName</div>
+          <div class="card-desc">Username search across hundreds of websites. Crowdsourced data file maintained by the OSINT community.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">username</span><span class="tag">enumeration</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://whatsmyname.app" target="_blank">whatsmyname.app &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F513;</span>
+          <div><div class="card-name">HaveIBeenPwned</div>
+          <div class="card-desc">Check if an email address has appeared in known data breaches. API available for automated monitoring.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">email</span><span class="tag">breaches</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://haveibeenpwned.com" target="_blank">haveibeenpwned.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4EC;</span>
+          <div><div class="card-name">EmailRep</div>
+          <div class="card-desc">Email reputation API scoring risk, age, associations, and deliverability of any email address.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">email</span><span class="tag">reputation</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://emailrep.io" target="_blank">emailrep.io &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── THREAT INTELLIGENCE ── -->
+  <section class="section" data-category="threats">
+    <div class="section-header">
+      <div class="section-icon" style="background:#3a1a1a">&#x1F6E1;</div>
+      <span class="section-title">Threat Intelligence &amp; Malware Analysis</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F6E1;</span>
+          <div><div class="card-name">VirusTotal</div>
+          <div class="card-desc">Multi-AV scanner for files, URLs, IPs, and domains. Graph view shows relationships between IOCs.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">malware</span><span class="tag">ioc</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.virustotal.com" target="_blank">virustotal.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9A0;</span>
+          <div><div class="card-name">AbuseIPDB</div>
+          <div class="card-desc">Community-reported malicious IP database. Check reputation scores and abuse categories for any IP address.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">ip reputation</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.abuseipdb.com" target="_blank">abuseipdb.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9EE;</span>
+          <div><div class="card-name">AlienVault OTX</div>
+          <div class="card-desc">Open threat exchange with community-shared IOC pulses. Integrates with SIEMs and security tools.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">ioc</span><span class="tag">community</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://otx.alienvault.com" target="_blank">otx.alienvault.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4A3;</span>
+          <div><div class="card-name">Any.run</div>
+          <div class="card-desc">Interactive online sandbox for malware analysis. Real-time behavior monitoring with MITRE ATT&amp;CK mapping.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">sandbox</span><span class="tag">malware</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://app.any.run" target="_blank">app.any.run &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9F5;</span>
+          <div><div class="card-name">Pulsedive</div>
+          <div class="card-desc">Threat intelligence platform aggregating feeds, indicators, and risk scores with timeline views.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">feeds</span><span class="tag">risk scoring</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://pulsedive.com" target="_blank">pulsedive.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F578;</span>
+          <div><div class="card-name">Recorded Future</div>
+          <div class="card-desc">Enterprise threat intelligence platform. Real-time dark web, technical, and geopolitical threat data.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">enterprise</span><span class="tag">dark web</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.recordedfuture.com" target="_blank">recordedfuture.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9EA;</span>
+          <div><div class="card-name">Hybrid Analysis</div>
+          <div class="card-desc">Free malware sandbox by CrowdStrike. Submits files and URLs for dynamic behavioral analysis with MITRE ATT&amp;CK tagging, network captures, and YARA rule matches.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">sandbox</span><span class="tag">malware</span><span class="tag">yara</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.hybrid-analysis.com" target="_blank">hybrid-analysis.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9F9;</span>
+          <div><div class="card-name">MalwareBazaar</div>
+          <div class="card-desc">Abuse.ch's free malware sample repository. Search and download samples by hash, tag, signature, or file type. Integrates with threat feeds and MISP.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">malware</span><span class="tag">samples</span><span class="tag">abuse.ch</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://bazaar.abuse.ch" target="_blank">bazaar.abuse.ch &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50D;</span>
+          <div><div class="card-name">URLScan.io</div>
+          <div class="card-desc">Automated URL and website scanner. Captures screenshots, DOM content, resource requests, and IP/certificate data for any submitted URL. Searchable public archive.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">url</span><span class="tag">phishing</span><span class="tag">scanning</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://urlscan.io" target="_blank">urlscan.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F41F;</span>
+          <div><div class="card-name">Talos Intelligence</div>
+          <div class="card-desc">Cisco Talos IP and domain reputation center. Check threat scores, email/web reputation, and historical activity for any host or sender.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">ip reputation</span><span class="tag">email</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://talosintelligence.com" target="_blank">talosintelligence.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3A3;</span>
+          <div><div class="card-name">ThreatFox</div>
+          <div class="card-desc">Abuse.ch IOC sharing platform. Search and export malware indicators (IPs, domains, URLs, hashes) with associated malware family tags and confidence scores.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">ioc</span><span class="tag">feeds</span><span class="tag">abuse.ch</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://threatfox.abuse.ch" target="_blank">threatfox.abuse.ch &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F6A8;</span>
+          <div><div class="card-name">PhishTank</div>
+          <div class="card-desc">Community-verified phishing URL database. Submit, verify, and query suspected phishing links. Free API available for integration into security workflows.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">phishing</span><span class="tag">url</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://phishtank.org" target="_blank">phishtank.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4A8;</span>
+          <div><div class="card-name">GreyNoise</div>
+          <div class="card-desc">Classifies internet background noise — distinguishing mass scanners, bots, and crawlers from targeted attack traffic. Helps analysts filter false positives in threat data.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">ip</span><span class="tag">noise filtering</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.greynoise.io" target="_blank">greynoise.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4E6;</span>
+          <div><div class="card-name">IBM X-Force Exchange</div>
+          <div class="card-desc">Threat intelligence sharing platform from IBM. Search IPs, URLs, hashes, and CVEs with community annotations and integration into SIEM/SOAR platforms.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">ioc</span><span class="tag">cve</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://exchange.xforce.ibmcloud.com" target="_blank">exchange.xforce.ibmcloud.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F480;</span>
+          <div><div class="card-name">Hudson Rock Cybercrime Tools</div>
+          <div class="card-desc">Free cybercrime intelligence tools powered by Hudson Rock's infostealer malware database. Search compromised credentials, infected machines, and corporate exposure from Raccoon, Vidar, Redline, and other stealer logs.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">infostealers</span><span class="tag">credentials</span><span class="tag">cybercrime</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.hudsonrock.com/threat-intelligence-cybercrime-tools" target="_blank">hudsonrock.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F5FA;</span>
+          <div><div class="card-name">Organized Crime Index</div>
+          <div class="card-desc">Global interactive index measuring organized crime levels and government resilience across 193 countries. Tracks criminal markets (trafficking, drugs, arms), criminal actor types, and anti-crime capacity — with historical data from 2019–2025 and overlay layers for ports, borders, and infrastructure.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">threats</span><span class="tag">organized crime</span><span class="tag">geopolitical</span><span class="tag">mapping</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://ocindex.net" target="_blank">ocindex.net &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── DARK WEB ── -->
+  <section class="section" data-category="darkweb">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a1a2a">&#x1F573;</div>
+      <span class="section-title">Dark Web Monitoring &amp; Research</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F50D;</span>
+          <div><div class="card-name">Ahmia</div>
+          <div class="card-desc">Clearnet search engine for indexed Tor .onion sites. Filters out illegal content and child abuse material.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">dark web</span><span class="tag">tor</span><span class="tag">search</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://ahmia.fi" target="_blank">ahmia.fi &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4DC;</span>
+          <div><div class="card-name">Intelligence X</div>
+          <div class="card-desc">Search engine for pastes, leaks, and dark web data. Indexes historical and deleted content.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">dark web</span><span class="tag">leaks</span><span class="tag">pastes</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://intelx.io" target="_blank">intelx.io &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F575;</span>
+          <div><div class="card-name">DarkOwl</div>
+          <div class="card-desc">Enterprise dark web monitoring and intelligence platform. Automated alerting for organizational exposure.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">dark web</span><span class="tag">monitoring</span><span class="tag">enterprise</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.darkowl.com" target="_blank">darkowl.com &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── BREACHES & LEAKS ── -->
+  <section class="section" data-category="breaches">
+    <div class="section-header">
+      <div class="section-icon" style="background:#3a2a1a">&#x1F4A7;</div>
+      <span class="section-title">Breaches, Leaks &amp; Exposed Data</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F513;</span>
+          <div><div class="card-name">HaveIBeenPwned</div>
+          <div class="card-desc">Troy Hunt's breach database. Check emails and phone numbers against 12+ billion breached records.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">breaches</span><span class="tag">email</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://haveibeenpwned.com" target="_blank">haveibeenpwned.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4A5;</span>
+          <div><div class="card-name">Dehashed</div>
+          <div class="card-desc">Search breached databases by email, username, IP, name, phone, VIN, or address. Large corpus of historical leaks.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">breaches</span><span class="tag">credentials</span><span class="tag access-paid">paid</span></div>
+        <a class="card-link" href="https://www.dehashed.com" target="_blank">dehashed.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F5C4;</span>
+          <div><div class="card-name">LeakIX</div>
+          <div class="card-desc">Search indexed exposed databases and services on the internet. Alerts for new exposures by domain.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">breaches</span><span class="tag">exposed data</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://leakix.net" target="_blank">leakix.net &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F511;</span>
+          <div><div class="card-name">BreachDirectory</div>
+          <div class="card-desc">Fast API-based breach search. Check for specific credentials or domains in known breach datasets.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">breaches</span><span class="tag">api</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://breachdirectory.org" target="_blank">breachdirectory.org &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── CORPORATE ── -->
+  <section class="section" data-category="corporate">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a2a1a">&#x1F3E2;</div>
+      <span class="section-title">Corporate &amp; Business Intelligence</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4BC;</span>
+          <div><div class="card-name">LinkedIn</div>
+          <div class="card-desc">Employee enumeration, organizational structure mapping, and professional history. Critical for corporate OSINT.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">corporate</span><span class="tag">people</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.linkedin.com" target="_blank">linkedin.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4C8;</span>
+          <div><div class="card-name">OpenCorporates</div>
+          <div class="card-desc">World's largest open database of companies. Search corporate filings, officers, and subsidiaries globally.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">corporate</span><span class="tag">filings</span><span class="tag">global</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://opencorporates.com" target="_blank">opencorporates.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4B0;</span>
+          <div><div class="card-name">SEC EDGAR</div>
+          <div class="card-desc">U.S. Securities and Exchange Commission filings database. 10-K, 10-Q, 8-K, and insider trading disclosures.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">corporate</span><span class="tag">financial</span><span class="tag">usa</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.sec.gov/cgi-bin/browse-edgar" target="_blank">sec.gov/edgar &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F3DB;</span>
+          <div><div class="card-name">Florida SunBiz</div>
+          <div class="card-desc">Florida Division of Corporations registry. Search business entities, registered agents, and officers.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">corporate</span><span class="tag">florida</span><span class="tag">state records</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://dos.fl.gov/sunbiz/search" target="_blank">dos.fl.gov/sunbiz &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4CB;</span>
+          <div><div class="card-name">Crunchbase</div>
+          <div class="card-desc">Startup and venture capital data. Funding rounds, investors, acquisitions, and executive team changes.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">corporate</span><span class="tag">startups</span><span class="tag">funding</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.crunchbase.com" target="_blank">crunchbase.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4B8;</span>
+          <div><div class="card-name">ICIJ Offshore Leaks</div>
+          <div class="card-desc">ICIJ's searchable database of offshore entities from the Panama Papers, Pandora Papers, Paradise Papers, and other major financial leaks. Search individuals, companies, and intermediaries across secretive jurisdictions to trace hidden assets and financial networks.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">corporate</span><span class="tag">financial</span><span class="tag">offshore</span><span class="tag">panama papers</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://offshoreleaks.icij.org" target="_blank">offshoreleaks.icij.org &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FRAMEWORKS & AUTOMATION ── -->
+  <section class="section" data-category="framework">
+    <div class="section-header">
+      <div class="section-icon" style="background:#1a1a3a">&#x2699;</div>
+      <span class="section-title">Frameworks, Automation &amp; Platforms</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F578;</span>
+          <div><div class="card-name">Maltego</div>
+          <div class="card-desc">Link analysis and data visualization platform. Transforms enable automated OSINT pivoting across entities.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">framework</span><span class="tag">visualization</span><span class="tag">automation</span><span class="tag access-freemium">freemium</span></div>
+        <a class="card-link" href="https://www.maltego.com" target="_blank">maltego.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F577;</span>
+          <div><div class="card-name">SpiderFoot</div>
+          <div class="card-desc">Automated OSINT reconnaissance tool. 200+ data sources, built-in reporting, and HX cloud version available.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">framework</span><span class="tag">automation</span><span class="tag">recon</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.spiderfoot.net" target="_blank">spiderfoot.net &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4D6;</span>
+          <div><div class="card-name">Wayback Machine</div>
+          <div class="card-desc">Archive.org's historical web capture database. View cached versions of websites and recover deleted content.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">framework</span><span class="tag">archive</span><span class="tag">history</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://web.archive.org" target="_blank">web.archive.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9F0;</span>
+          <div><div class="card-name">Recon-ng</div>
+          <div class="card-desc">Web reconnaissance framework with modular design. Modules for WHOIS, social, geolocation, and reporting.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">framework</span><span class="tag">recon</span><span class="tag">modular</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://github.com/lanmaster53/recon-ng" target="_blank">github.com/lanmaster53 &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4E1;</span>
+          <div><div class="card-name">theHarvester</div>
+          <div class="card-desc">Gather emails, subdomains, hosts, employee names from public sources. Classic OSINT enumeration tool.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">framework</span><span class="tag">email</span><span class="tag">subdomain</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://github.com/laramies/theHarvester" target="_blank">github.com/laramies &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F52C;</span>
+          <div><div class="card-name">OSINT Framework</div>
+          <div class="card-desc">Community-maintained mind-map of OSINT tools organized by category. Essential reference for analysts.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">framework</span><span class="tag">reference</span><span class="tag">directory</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://osintframework.com" target="_blank">osintframework.com &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── DOCUMENTS ── -->
+  <section class="section" data-category="documents">
+    <div class="section-header">
+      <div class="section-icon" style="background:#2a2a1a">&#x1F4C4;</div>
+      <span class="section-title">Documents, Records &amp; FOIA</span>
+      <span class="section-count"></span>
+    </div>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4C4;</span>
+          <div><div class="card-name">MuckRock</div>
+          <div class="card-desc">FOIA request platform and document repository. Search filed requests, responses, and government documents.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">documents</span><span class="tag">foia</span><span class="tag">government</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.muckrock.com" target="_blank">muckrock.com &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4BB;</span>
+          <div><div class="card-name">DocumentCloud</div>
+          <div class="card-desc">Upload, analyze, and annotate primary source documents. Full-text search across journalist-submitted materials.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">documents</span><span class="tag">analysis</span><span class="tag">journalism</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.documentcloud.org" target="_blank">documentcloud.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F9FE;</span>
+          <div><div class="card-name">FOIA Machine</div>
+          <div class="card-desc">Streamline FOIA requests with automatic agency routing and deadline tracking.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">documents</span><span class="tag">foia</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://www.foiamachine.org" target="_blank">foiamachine.org &#x2197;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><span class="card-emoji">&#x1F4BE;</span>
+          <div><div class="card-name">ExifTool (Metadata)</div>
+          <div class="card-desc">Extract and analyze metadata from PDFs, Office documents, images, and media files for hidden information.</div></div>
+        </div>
+        <div class="card-tags"><span class="tag">documents</span><span class="tag">metadata</span><span class="tag access-free">free</span></div>
+        <a class="card-link" href="https://exiftool.org" target="_blank">exiftool.org &#x2197;</a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <p>OSINT Resource Center &mdash; For authorized intelligence and research use only.</p>
+  <p style="margin-top:0.5rem">Tools and resources are for lawful purposes only. Always obtain proper authorization before conducting investigations.</p>
+  <p style="margin-top:1.25rem; font-size:0.7rem; color:#3a4a5a">Curated by Dennis Keefe</p>
+</footer>
+
+<!-- ══════════════ JS ══════════════ -->
+<script>
+  const filterBtns  = document.querySelectorAll('.filter-btn');
+  const sections    = document.querySelectorAll('.section[data-category]');
+  const searchInput = document.getElementById('searchInput');
+  const resultCount = document.getElementById('resultCount');
+
+  // ── Dynamic counts ──────────────────────────────────────────────
+  function countAll() {
+    return document.querySelectorAll('.section[data-category] .card').length;
+  }
+
+  function countFree() {
+    return document.querySelectorAll('.section[data-category] .card .access-free').length;
+  }
+
+  function countCategories() {
+    return document.querySelectorAll('.section[data-category]').length;
+  }
+
+  function updateStats(visibleCount) {
+    const total = countAll();
+    document.getElementById('statTotal').textContent      = total;
+    document.getElementById('statFree').textContent       = countFree();
+    document.getElementById('statCategories').textContent = countCategories();
+
+    // Also sync the section-count badges
+    sections.forEach(sec => {
+      const badge = sec.querySelector('.section-count');
+      if (badge) {
+        const n = sec.querySelectorAll('.card').length;
+        badge.textContent = n + ' resource' + (n !== 1 ? 's' : '');
+      }
+    });
+
+    // Header badge: show filtered count when searching, total otherwise
+    if (visibleCount !== null) {
+      resultCount.textContent = visibleCount + ' result' + (visibleCount !== 1 ? 's' : '');
+    } else {
+      resultCount.textContent = total + ' Resources';
+    }
+  }
+
+  // Run on page load
+  updateStats(null);
+
+  // ── Unified filter state ─────────────────────────────────────────
+  let activeCategory = 'all';
+  let activeAccess   = 'all';
+
+  const accessBtns = document.querySelectorAll('.access-btn');
+  const searchClear = document.getElementById('searchClear');
+
+  function applyFilters() {
+    const q = searchInput.value.toLowerCase().trim();
+    let visible = 0;
+
+    searchClear.style.display = q ? 'block' : 'none';
+
+    sections.forEach(sec => {
+      const catMatch = activeCategory === 'all' || sec.dataset.category === activeCategory;
+      let secVisible = false;
+
+      sec.querySelectorAll('.card').forEach(card => {
+        const searchMatch  = !q || card.textContent.toLowerCase().includes(q);
+        const catCardMatch = q ? true : catMatch;
+        const accessMatch  = activeAccess === 'all' || card.querySelector('.tag.access-' + activeAccess);
+        const show = searchMatch && catCardMatch && accessMatch;
+        card.classList.toggle('hidden', !show);
+        if (show) { secVisible = true; visible++; }
+      });
+
+      sec.classList.toggle('hidden', !secVisible);
+    });
+
+    const anyFilter = q || activeCategory !== 'all' || activeAccess !== 'all';
+    updateStats(anyFilter ? visible : null);
+  }
+
+  // ── Category filter ─────────────────────────────────────────────
+  filterBtns.forEach(btn => {
+    if (btn.classList.contains('access-btn')) return;
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => { if (!b.classList.contains('access-btn')) b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeCategory = btn.dataset.filter;
+      searchInput.value = '';
+      applyFilters();
+    });
+  });
+
+  // ── Access filter ────────────────────────────────────────────────
+  accessBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      accessBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeAccess = btn.dataset.access;
+      applyFilters();
+    });
+  });
+
+  // ── Search ───────────────────────────────────────────────────────
+  searchInput.addEventListener('input', () => {
+    if (searchInput.value) {
+      filterBtns.forEach(b => { if (!b.classList.contains('access-btn')) b.classList.remove('active'); });
+      activeCategory = 'all';
+    }
+    applyFilters();
+  });
+
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchInput.focus();
+    applyFilters();
+  });
+</script>
+</body>
+</html>
