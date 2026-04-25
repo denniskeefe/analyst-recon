@@ -1987,6 +1987,10 @@
     searchInput.focus();
     applyFilters();
   });
+
+  document.querySelectorAll('a[target="_blank"]').forEach(a => {
+    a.rel = 'noopener noreferrer';
+  });
 </script>
 </body>
 </html>
