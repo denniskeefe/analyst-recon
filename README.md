@@ -1,6 +1,6 @@
 # OSINT Resource Center
 
-A curated, single-file intelligence hub for open-source analysts. Discover tools, frameworks, and data sources across every domain of OSINT collection — all in one searchable, filterable interface.
+A curated, single-file intelligence hub for open-source analysts. Discover tools, frameworks, and data sources across every domain of OSINT collection — all in one searchable, filterable interface..
 
 Vibe coded with [Claude](https://claude.ai).
 
